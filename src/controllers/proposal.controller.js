@@ -82,7 +82,53 @@ const getRecievedProposals = async (req, res) =>{
                 message: "Server Error"
             })
         }
-    }
+}
+
+const respondToProposal = async (req,res) =>{
+   try {
+     const {id} = req.params;
+     const  {status} = req.body;
+     if(status !=="ACCEPTED" && status !== "REJECTED"){
+         return res.status(400).json({
+             message: "Invalid status"
+         })
+     }
+ 
+     const proposal = await Proposal.findById(id)
+     if(!proposal){
+         return res.status(404).json({
+             message: "Proposal is not found on the given id."
+         })
+     }
+ 
+     if(proposal.clientId.toString() !==req.user.userId){
+         return res.status(403).json({
+             message: "User is not allowed to update the status."
+         })
+     }
+ 
+     if(proposal.status !="PENDING"){
+         return res.status(409).json({
+             message: "Operation already performed"
+         })
+     }
+     const updatedStatus = await Proposal.findOneAndUpdate(
+         {_id:id},
+         {status},
+         {new: true}
+     )
+ 
+     return res.status(200).json({
+         message: `Proposal is ${status}`,
+         updatedStatus
+     })
+   } catch (error) {
+    console.log("server error", error);
+    return res.status(500).json({
+        message: "server error"
+    })
+   }
+}
     
 
 
@@ -90,5 +136,6 @@ const getRecievedProposals = async (req, res) =>{
 module.exports = {
     createProposal,
     getMyProposal,
-    getRecievedProposals
+    getRecievedProposals,
+    respondToProposal
 }

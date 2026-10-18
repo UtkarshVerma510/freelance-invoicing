@@ -1,6 +1,6 @@
 const express = require("express")
 const router  = express.Router();
-const {registerUser, loginUser} = require("../controllers/user.controller.js");
+const {registerUser, loginUser, getCurrentUser, logoutUser} = require("../controllers/user.controller.js");
 const { verifyJwt, isFreeLancer } = require("../middlewares/auth.middleware.js");
 
 
@@ -12,6 +12,8 @@ router.get("/test-protected",verifyJwt, (req,res)=>{
         message: "You are authenticied."
     })
 })
+router.get("/me", verifyJwt, getCurrentUser)
+router.post("/logout", logoutUser)
 
 
 module.exports = router;

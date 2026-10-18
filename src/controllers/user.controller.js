@@ -118,8 +118,45 @@ const loginUser = async (req, res) =>{
 
 }
 
+const getCurrentUser= async (req,res)=>{
+    try {
+    
+        const user = await User.findById(req.user.userId).select("-password");
+        if(!user){
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+
+        return res.status(200).json({
+            user
+        })
+
+
+
+
+    } catch (error) {
+        console.log("Error in currentUser: ", error);
+        return res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+const logoutUser = async (req, res) =>{
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production"
+    })
+
+    return res.status(200).json({
+        message: "Logout Successfully"
+    })
+}
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getCurrentUser,
+    logoutUser
 }

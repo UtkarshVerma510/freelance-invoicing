@@ -156,16 +156,16 @@ const logoutUser = async (req, res) =>{
 
 const findClientByEmail = async (req, res)=>{
     try {
-        const email = req.query;
+        const {email} = req.query;
         if(!email){ 
             return res.status(400).json({
                 message: "Email is required."
             })
         }
         const client  = await User.findOne({
-            email: email.trim().tolowercase(),
-            role: client
-        }).select("_it username email")
+            email: email.trim().toLowerCase(),
+            role: "client"
+        }).select("_id username email")
     
         if(!client){
             return res.status(404).json({
@@ -175,7 +175,7 @@ const findClientByEmail = async (req, res)=>{
         return res.status(200).json({client});
     } catch (error) {
         console.log("Error in findClientByEmail", error);
-        return res.status(500).josn({
+        return res.status(500).json({
             message: "Server error."
         })
     }

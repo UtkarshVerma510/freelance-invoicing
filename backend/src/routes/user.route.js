@@ -14,6 +14,6 @@ router.get("/test-protected",verifyJwt, (req,res)=>{
 })
 router.get("/me", verifyJwt, getCurrentUser)
 router.post("/logout", logoutUser)
-router.get("find-client", verifyJwt, isFreeLancer, findClientByEmail)
+router.get("/find-client", verifyJwt, isFreeLancer, findClientByEmail)
 
 module.exports = router;
